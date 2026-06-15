@@ -2,42 +2,118 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 export default function Navbar() {
+  const [isScrolled, setIsScrolled] = React.useState(false)
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const navLinks = [
+    { label: "Features", href: "#features" },
+    { label: "Testimonials", href: "#testimonials" },
+    { label: "How it works", href: "#how-it-works" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Blog", href: "#blog" },
+  ]
+
   return (
-    <header className="absolute top-12 left-0 right-0 z-50 w-full max-w-[1300px] mx-auto px-12 md:px-20">
-      <div className="flex items-center justify-between">
-        {/* Brand & Logo */}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+        isScrolled
+          ? "bg-white/80 backdrop-blur-md border-b border-[#E4E4E7] py-4 shadow-xs"
+          : "bg-transparent py-6 border-b border-transparent"
+      }`}
+    >
+      <div className="max-w-[1200px] mx-auto px-6 md:px-8 flex items-center justify-between">
+        {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          {/* Stylized organic leaf/flower icon */}
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="fill-current text-[#b0f0d6] transition-transform duration-300 group-hover:scale-105"
-          >
-            <path d="M12 2C12 2 14.5 7 19 9C14.5 11 12 16 12 16C12 16 9.5 11 5 9C9.5 7 12 2 12 2Z" />
-            <path
-              d="M12 8C12 8 13.25 11 15.5 12C13.25 13 12 16 12 16C12 16 10.75 13 8.5 12C10.75 11 12 8 12 8Z"
-              className="text-[#d3ac64] fill-current"
-            />
-          </svg>
-          <span className="text-headline-md font-bold tracking-tight text-white transition-colors duration-300">
-            Workly
+          <span className="font-sans font-bold text-[22px] tracking-tight text-black hover:opacity-80 transition-opacity">
+            hirlee
           </span>
         </Link>
 
-        {/* Right Action Button */}
-        <div className="flex items-center gap-3">
+        {/* Center: Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="font-sans text-[15px] font-medium text-[#737373] hover:text-black transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Right: CTA Button */}
+        <div className="hidden md:flex items-center gap-3">
           <Button
             asChild
-            className="rounded-full px-5 py-1 h-8 text-label-sm font-bold active:scale-[0.98] transition-all duration-300 bg-white hover:bg-white/90 text-[#003527] border border-white/20"
+            className="rounded-full bg-black text-white hover:bg-neutral-800 font-medium px-6 py-4.5 transition-all duration-200 shadow-xs active:scale-[0.98] border border-black cursor-pointer"
           >
-            <a href="#cta-section">Early Access</a>
+            <Link href="#download">Join waitlist</Link>
           </Button>
+        </div>
+
+        {/* Mobile menu trigger */}
+        <div className="md:hidden flex items-center">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-black hover:bg-neutral-100 rounded-full"
+                aria-label="Toggle Menu"
+              >
+                <Menu className="size-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="bg-white border-l border-zinc-200 p-6 w-[280px]">
+              <SheetHeader className="text-left mb-8 px-0">
+                <SheetTitle className="font-sans font-bold text-[22px] tracking-tight text-black">
+                  hirlee
+                </SheetTitle>
+              </SheetHeader>
+              <div className="flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="font-sans text-[16px] font-medium text-[#737373] hover:text-black transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="pt-6 border-t border-zinc-200 mt-2">
+                  <Button
+                    asChild
+                    className="w-full rounded-full bg-black text-white hover:bg-neutral-800 font-medium py-5 justify-center shadow-xs cursor-pointer"
+                  >
+                    <Link href="#download">Join waitlist</Link>
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
